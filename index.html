@@ -1,0 +1,133 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script defer src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <div class="container">
+      <form class="ex-form">
+        <div class="row row-cols-1">
+      <label for ="item" class="form-label">Expense Item </label>
+        <input name= "item" type="text" id="item" class="form-control" style="width: 400px"></input>
+        </br>
+      <label  class="form-label" for="itemid" class="form-control">ID</label>
+      <input name="itemid" type="text" id="itemid" class="form-control" style="width: 400px"> </input></br>
+      <label  class="form-label" for="amount">Expense Amount</label>
+        <input name="amount" type="number" id="amount" class="form-control" style="width: 400px"> </input>
+       </br><label  class="form-label" for="description" class="form-control">Expense Description</label>
+      <input name="description" type="text" id="description" class="form-control" style="width: 400px"> </input></br>
+      
+<button type="submit" class="btn btn-primary">Submit Expense</button>
+    </div>
+  </form>
+  </div>
+    </div>
+</br>
+    <div class="table-reponsive-sm">
+      <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Item ID</th>
+          <th>Amount</th>
+          <th>Description</th>
+          <th>Action</th>
+        </tr>        
+      </thead>
+      
+      <tbody id="tab" >
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>  
+      </tbody>
+      
+    </table>
+      </div>
+ <script>
+       const exForm = document.querySelector(".ex-form");
+      exForm.addEventListener("submit", addExpense);
+      
+      function addExpense(e)
+      {
+        e.preventDefault();
+        let name = e.target.item.value;
+        let id = e.target.itemid.value;
+            let amount = e.target.amount.value;
+              let desc = e.target.description.value;
+        let itemObj = {id, name, amount, desc};
+        let strItem = JSON.stringify(itemObj);
+        localStorage.setItem(id, strItem);
+        showOnScreen(itemObj);
+        
+      }
+ 
+window.addEventListener("DOMContentLoaded", () => 
+                        {
+          Object.keys(localStorage).forEach((key)=>
+                                            {
+    let itemObjFromStorage = JSON.parse(localStorage.getItem(key));
+            showOnScreen(itemObjFromStorage);
+      })
+});
+
+      
+      function showOnScreen(item)
+      {
+        document.getElementById('itemid').value = '';
+        document.getElementById('item').value = '';
+        document.getElementById('amount').value = '';
+        document.getElementById('description').value ='';
+        
+       if(localStorage.getItem(item.id) !== null)
+       {
+       removeFromUI(item.id);
+       }
+        
+        let parentN = document.getElementById("tab");
+        let childH = `<tr id=${item.id}>
+                                   <td>${item.name}</td>
+                                        <td>${item.id}</td>
+                                        <td>${item.amount}</td>
+                                        <td>${item.desc}</td>
+                       <td> <button onclick=delFn(${item.id})>Delete</button>
+                       <button onclick=editFn(${item.id})>Edit</button>              
+                                         </td>                                      
+                                          </tr>`;
+                        parentN.innerHTML = parentN.innerHTML + childH;
+}
+      
+
+
+function editFn(iid)
+      {
+       document.getElementById("itemid").value = iid;
+           
+       delFn(iid);
+
+      }
+      
+      function delFn(itemId)
+      {
+        localStorage.removeItem(itemId);
+        removeFromUI(itemId);
+      }
+      
+      function removeFromUI(itId)
+      {
+        let parentEl = document.getElementById("tab");
+        let childToBeRemoved = document.getElementById(itId);
+        if(childToBeRemoved)        
+            parentEl.removeChild(childToBeRemoved)
+      }
+</script>
+ 
+      
+  </body>
+  </html>
